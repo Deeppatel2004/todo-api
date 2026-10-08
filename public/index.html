@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>todo-app</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: #202b28;
+      background: #edf4ef;
+      font-synthesis: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      width: min(100% - 32px, 620px);
+      margin: 72px auto;
+      padding: 32px;
+      background: #fffefa;
+      border: 1px solid #dbe5dc;
+      border-radius: 12px;
+      box-shadow: 0 18px 50px rgb(36 62 49 / 9%);
+    }
+
+    body::before {
+      content: "A little more room to think";
+      display: block;
+      margin-bottom: 24px;
+      color: #60776b;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid #cbd8ce;
+      border-radius: 6px;
+      background: #fff;
+      color: inherit;
+      font: inherit;
+    }
+
+    input:focus {
+      border-color: #278264;
+      outline: 3px solid rgb(39 130 100 / 16%);
+    }
+
+    #todoInput {
+      flex: 1;
+    }
+
+    .actions {
+      margin-top: 14px;
+    }
+
+    #searchInput {
+      width: 100%;
+      background: #f6f8f4;
+    }
+
+    button {
+      min-height: 44px;
+      padding: 0 15px;
+      border: 1px solid #d4dfd6;
+      border-radius: 6px;
+      background: #f4f7f2;
+      color: #31443a;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+    }
+
+    button:hover {
+      border-color: #9bb8a4;
+      background: #e9f1e9;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:focus-visible {
+      outline: 3px solid rgb(39 130 100 / 25%);
+      outline-offset: 2px;
+    }
+
+    #addBtn {
+      border-color: #217454;
+      background: #217454;
+      color: #fff;
+    }
+
+    #addBtn:hover {
+      border-color: #185d42;
+      background: #185d42;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #e4e9e2;
+    }
+
+    #sortBtn {
+      margin-left: auto;
+      background: transparent;
+    }
+
+    #todolist {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #todolist li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 58px;
+      padding: 8px;
+      border: 1px solid #e2e9e1;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    #todolist li span {
+      flex: 1;
+      overflow-wrap: anywhere;
+      padding: 0 8px;
+    }
+
+    .done {
+      color: #87938a;
+      text-decoration: line-through;
+    }
+
+    #left {
+      margin: 18px 0 12px;
+      color: #60776b;
+      font-size: 14px;
+    }
+
+    #clearDoneBtn {
+      border-color: #ead6cf;
+      background: #fff8f5;
+      color: #9c4f3e;
+    }
+
+    #clearDoneBtn:hover {
+      border-color: #d9b5a9;
+      background: #fbedE7;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        width: min(100% - 20px, 620px);
+        margin: 20px auto;
+        padding: 22px 16px;
+      }
+
+      #todolist li {
+        flex-wrap: wrap;
+      }
+
+      #todolist li span {
+        flex-basis: 100%;
+        padding: 4px 8px;
+      }
+
+      #sortBtn {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <form id="todoForm">
+  <input type="text" id="todoInput" placeholder="type something">
+  <button type="submit" id="addBtn">Add</button>
+  </form>
+
+  <div class="actions">
+    <input type="text" id="searchInput" placeholder="Search todos...">
+  </div>
+
+  <div class="filters">
+    <button id="filterAll">All</button>
+    <button id="filterActive">Active</button>
+    <button id="filterDone">Done</button>
+    <button id="sortBtn">Sort A-Z</button>
+  </div>
+
+  <ul id="todolist"></ul>
+  <p id="left"></p>
+  <button id="clearDoneBtn">Clear done</button>
+  <script src="script.js"></script>
+  
+</body>
+</html>
