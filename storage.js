@@ -1,17 +1,30 @@
-       const fs = require('fs');
-       const FILE = 'todos.json';
 
-       function load() {
-        try {
-         if (!fs.existsSync(FILE)) return [];
-         return JSON.parse(fs.readFileSync(FILE, 'utf8'));
-        } catch (e) {
-         return [];
-        }
-       }
+const fs = require("fs");
+const path = require("path");
 
-       function save(todos) {
-         fs.writeFileSync(FILE, JSON.stringify(todos, null, 2));
-       }
+const FILE = path.join(__dirname, "todos.json");
 
-       module.exports = { load, save };
+function load() {
+  try {
+    const data = fs.readFileSync(FILE, "utf8");
+    const todos = JSON.parse(data);
+
+    return Array.isArray(todos) ? todos : [];
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return [];
+    }
+
+    if (error instanceof SyntaxError) {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+function save(todos) {
+  fs.writeFileSync(FILE, JSON.stringify(todos, null, 2));
+}
+
+module.exports = { load, save };

@@ -7,9 +7,7 @@ const leftText = document.querySelector("#left");
 const message = document.querySelector("#message");
 
 
-// #####################################################
 // LOAD TODOS FROM API
-// #####################################################
 
 async function loadTodos() {
   try {
@@ -31,9 +29,7 @@ async function loadTodos() {
 }
 
 
-// #####################################################
 // RENDER
-// #####################################################
 
 function render() {
   todoList.innerHTML = "";
@@ -81,10 +77,7 @@ function render() {
   leftText.textContent = `${left} left`;
 }
 
-
-// #####################################################
 // ADD TODO
-// #####################################################
 
 async function addTodo(text) {
 
@@ -111,10 +104,7 @@ async function addTodo(text) {
   await loadTodos();
 }
 
-
-// #####################################################
 // TOGGLE TODO
-// #####################################################
 
 async function toggleTodo(id) {
 
@@ -151,9 +141,7 @@ async function toggleTodo(id) {
 }
 
 
-// #####################################################
 // DELETE TODO
-// #####################################################
 
 async function deleteTodo(id) {
 
@@ -173,9 +161,7 @@ async function deleteTodo(id) {
 }
 
 
-// #####################################################
 // ADD BUTTON
-// #####################################################
 
 addBtn.addEventListener("click", async () => {
 
@@ -192,9 +178,7 @@ addBtn.addEventListener("click", async () => {
 });
 
 
-// #####################################################
 // ENTER KEY
-// #####################################################
 
 todoInput.addEventListener("keydown", async (event) => {
 
@@ -211,10 +195,5 @@ todoInput.addEventListener("keydown", async (event) => {
     todoInput.value = "";
   }
 });
-
-
-// #####################################################
-// FIRST LOAD
-// #####################################################
 
 loadTodos();

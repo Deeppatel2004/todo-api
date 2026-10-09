@@ -1,9 +1,21 @@
+
 const express = require("express");
 const { load, save } = require("./storage");
+const { logLine } = require("./logger");
+const { getPort } = require("./config");
+const { errorBody } = require("./errors");
 
+const PORT = getPort(process.env);
 const app = express();
 
 app.use(express.json());
+
+// Log all requests
+app.use((req, res, next) => {
+  const log = logLine(req.method, req.url, res.statusCode);
+  console.log(log);
+  next();
+});
 
 // Show frontend
 app.use(express.static("public"));
@@ -45,12 +57,10 @@ function applyPatch(todo, body) {
   return todo;
 }
 
-
 // GET /todos
 app.get("/todos", (req, res) => {
   res.json(filterByQuery(todos, req.query.done));
 });
-
 
 // GET /todos/:id
 app.get("/todos/:id", (req, res) => {
@@ -64,7 +74,6 @@ app.get("/todos/:id", (req, res) => {
 
   res.json(todos[i]);
 });
-
 
 // POST /todos
 app.post("/todos", (req, res) => {
@@ -88,7 +97,6 @@ app.post("/todos", (req, res) => {
   res.status(201).json(todo);
 });
 
-
 // PATCH /todos/:id
 app.patch("/todos/:id", (req, res) => {
   const i = findIndexById(todos, req.params.id);
@@ -106,7 +114,6 @@ app.patch("/todos/:id", (req, res) => {
   res.json(todos[i]);
 });
 
-
 // DELETE /todos/:id
 app.delete("/todos/:id", (req, res) => {
   const i = findIndexById(todos, req.params.id);
@@ -117,15 +124,21 @@ app.delete("/todos/:id", (req, res) => {
     });
   }
 
-  const deleted = todos.splice(i, 1)[0];
+  todos.splice(i, 1);
 
   save(todos);
 
-  res.json(deleted);
+  res.status(204).end();
 });
 
+// STEP 3: 404 for unknown routes
+app.use((req, res) => {
+  res.status(404).json(
+    errorBody(404, "route not found")
+  );
+});
 
 // Start server
-app.listen(3000, () => {
-  console.log("server on http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`server on http://localhost:${PORT}`);
 });
