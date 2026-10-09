@@ -28,18 +28,9 @@ function applyPatch(todo, body) {
 }
 
 function filterByQuery(todos, done) {
-  if (done === undefined) {
-    return todos;
-  }
-
-  if (done === "true") {
-    return todos.filter(todo => todo.done === true);
-  }
-
-  if (done === "false") {
-    return todos.filter(todo => todo.done === false);
-  }
-
+  if (done === undefined) return todos;
+  if (done === "true") return todos.filter(todo => todo.done === true);
+  if (done === "false") return todos.filter(todo => todo.done === false);
   return todos;
 }
 
