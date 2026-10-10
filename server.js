@@ -12,11 +12,12 @@ const app = express();
 app.use(express.json());
 
 // Log requests
-app.use((req, res, next) => {
-  const log = logLine(req.method, req.url, res.statusCode);
-  console.log(log);
-  next();
-});
+        app.use((req, res, next) => {
+          res.on('finish', () => {
+            console.log(logLine(req.method, req.url, res.statusCode));
+          });
+          next();
+        });
 
 // Serve frontend
 app.use(express.static("public"));
