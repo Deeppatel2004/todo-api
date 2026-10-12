@@ -1,5 +1,6 @@
 
 const express = require("express");
+const { healthBody } = require("./helpers");
 
 const todoRoutes = require("./routes/todos");
 const { logLine } = require("./logger");
@@ -8,6 +9,10 @@ const { errorBody } = require("./helpers");
 
 const PORT = getPort(process.env);
 const app = express();
+
+app.get("/health", (req, res) => {
+  res.json(healthBody("1.0.0", process.uptime()));
+});
 
 app.use(express.json());
 
@@ -43,6 +48,10 @@ app.use((err, req, res, next) => {
   }
 
   res.status(500).json(errorBody(500));
+});
+
+app.get("/health", (req, res) => {
+  res.json(healthBody("1.0.0", process.uptime()));
 });
 
 app.listen(PORT, () => {

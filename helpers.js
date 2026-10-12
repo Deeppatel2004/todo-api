@@ -1,3 +1,10 @@
+function healthBody(version, uptime) {
+  return {
+    status: "ok",
+    version,
+    uptime
+  };
+}
 
 function validateTodo(body) {
   if (!body || typeof body.text !== "string" || !body.text.trim()) {
@@ -49,5 +56,6 @@ module.exports = {
   findIndexById,
   applyPatch,
   filterByQuery,
-  errorBody
+  errorBody,
+  healthBody
 };
