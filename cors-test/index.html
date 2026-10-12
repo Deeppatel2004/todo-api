@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CORS Test</title>
+</head>
+<body>
+  <button id="go">Load todos</button>
+  <pre id="out"></pre>
+
+  <script>
+    document.querySelector("#go").addEventListener("click", async () => {
+      const out = document.querySelector("#out");
+
+      try {
+        const res = await fetch(
+          "https://todo-api-kr2p.onrender.com/todos"
+        );
+
+        const data = await res.json();
+
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        out.textContent = error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -9,6 +9,9 @@ const { errorBody } = require("./helpers");
 
 const PORT = getPort(process.env);
 const app = express();
+const cors = require("cors");
+
+app.use(cors());
 
 app.get("/health", (req, res) => {
   res.json(healthBody("1.0.0", process.uptime()));
