@@ -203,15 +203,16 @@
   </div>
 
   <div class="filters">
-    <button id="filterAll">All</button>
-    <button id="filterActive">Active</button>
-    <button id="filterDone">Done</button>
-    <button id="sortBtn">Sort A-Z</button>
+    <button type="button" id="filterAll" aria-pressed="true">All</button>
+    <button type="button" id="filterActive" aria-pressed="false">Active</button>
+    <button type="button" id="filterDone" aria-pressed="false">Done</button>
+    <button type="button" id="sortBtn" aria-pressed="false">Sort A-Z</button>
   </div>
 
+  <p id="message" role="status" aria-live="polite"></p>
   <ul id="todolist"></ul>
   <p id="left"></p>
-  <button id="clearDoneBtn">Clear done</button>
+  <button type="button" id="clearDoneBtn">Clear done</button>
   <script src="script.js"></script>
   
 </body>
