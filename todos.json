@@ -1,12 +1,47 @@
 [
   {
     "id": 1,
+    "text": "learn java",
+    "done": false
+  },
+  {
+    "id": 3,
     "text": "GO TO THE GYM ⛹",
     "done": false
   },
   {
-    "id": 2,
+    "id": 4,
+    "text": "Learn MongoDB",
+    "done": false
+  },
+  {
+    "id": 5,
     "text": "go to  bank",
+    "done": false
+  },
+  {
+    "id": 6,
+    "text": "learn python",
+    "done": false
+  },
+  {
+    "id": 7,
+    "text": "MongoDB Test Todo",
+    "done": false
+  },
+  {
+    "id": 8,
+    "text": "MongoDB Test Todo",
+    "done": false
+  },
+  {
+    "id": 9,
+    "text": "Learn MongoDB",
+    "done": false
+  },
+  {
+    "id": 10,
+    "text": "hiiiiiiiiii",
     "done": false
   }
 ]
