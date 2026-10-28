@@ -11,3 +11,5 @@ function getPort(env) {
 }
 
 module.exports = { getPort };
+
+console.log("MongoDB URI exists:", !!process.env.MONGODB_URI);

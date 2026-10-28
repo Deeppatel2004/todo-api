@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Environment variables (MongoDB password)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/

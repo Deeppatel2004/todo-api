@@ -1,3 +1,4 @@
+
 function healthBody(version, uptime) {
   return {
     status: "ok",
@@ -6,6 +7,7 @@ function healthBody(version, uptime) {
   };
 }
 
+// Validate new todo
 function validateTodo(body) {
   if (!body || typeof body.text !== "string" || !body.text.trim()) {
     return { ok: false, error: "text is required" };
@@ -14,33 +16,79 @@ function validateTodo(body) {
   return { ok: true };
 }
 
-function nextId(todos) {
-  return todos.reduce((max, todo) => Math.max(max, todo.id), 0) + 1;
+// MongoDB filter for GET /todos
+function buildFilter(done) {
+  if (done === "true") {
+    return { done: true };
+  }
+
+  if (done === "false") {
+    return { done: false };
+  }
+
+  return {};
 }
 
-function findIndexById(todos, id) {
-  return todos.findIndex(todo => todo.id === Number(id));
+// Check MongoDB ObjectId
+function isValidId(id) {
+  return (
+    typeof id === "string" &&
+    /^[a-fA-F0-9]{24}$/.test(id)
+  );
 }
 
-function applyPatch(todo, body) {
+// Convert MongoDB document to public API format
+function toPublic(doc) {
+  return {
+    id: doc._id.toString(),
+    text: doc.text,
+    done: doc.done
+  };
+}
+
+// Prepare changes for PATCH /todos/:id
+function cleanPatch(body) {
+  const changes = {};
+
+  if (!body || typeof body !== "object") {
+    return changes;
+  }
+
   if (typeof body.text === "string" && body.text.trim()) {
-    todo.text = body.text.trim();
+    changes.text = body.text.trim();
   }
 
   if (typeof body.done === "boolean") {
-    todo.done = body.done;
+    changes.done = body.done;
   }
 
-  return todo;
+  return changes;
 }
 
-function filterByQuery(todos, done) {
-  if (done === undefined) return todos;
-  if (done === "true") return todos.filter(todo => todo.done === true);
-  if (done === "false") return todos.filter(todo => todo.done === false);
-  return todos;
+// Validate PATCH data
+function validatePatch(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return { ok: false, error: "Invalid changes" };
+  }
+
+  if (
+    body.text !== undefined &&
+    (typeof body.text !== "string" || !body.text.trim())
+  ) {
+    return { ok: false, error: "Invalid text" };
+  }
+
+  if (
+    body.done !== undefined &&
+    typeof body.done !== "boolean"
+  ) {
+    return { ok: false, error: "Invalid done value" };
+  }
+
+  return { ok: true };
 }
 
+// Keep the original error response format
 function errorBody(status, message = "server error") {
   return {
     error: {
@@ -52,10 +100,11 @@ function errorBody(status, message = "server error") {
 
 module.exports = {
   validateTodo,
-  nextId,
-  findIndexById,
-  applyPatch,
-  filterByQuery,
+  buildFilter,
+  isValidId,
+  toPublic,
+  cleanPatch,
+  validatePatch,
   errorBody,
   healthBody
 };

@@ -2,33 +2,35 @@
 const express = require("express");
 const router = express.Router();
 
-const { load, save } = require("../storage");
+const Todo = require("../models/Todo");
 
 const {
   validateTodo,
-  nextId,
-  findIndexById,
-  applyPatch,
-  filterByQuery,
+  validatePatch,
+  buildFilter,
+  isValidId,
+  toPublic,
+  cleanPatch,
   errorBody
 } = require("../helpers");
 
 // GET /todos
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const todos = load();
-    const filtered = filterByQuery(todos, req.query.done);
+    const docs = await Todo.find(
+      buildFilter(req.query.done)
+    );
 
-    res.status(200).json(filtered);
+    res.status(200).json(docs.map(toPublic));
   } catch (error) {
+    console.error(error);
     res.status(500).json(errorBody(500));
   }
 });
 
 // POST /todos
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const todos = load();
     const validation = validateTodo(req.body);
 
     if (!validation.ok) {
@@ -37,77 +39,106 @@ router.post("/", (req, res) => {
       );
     }
 
-    const todo = {
-      id: nextId(todos),
-      text: req.body.text.trim(),
-      done: false
-    };
+    const doc = await Todo.create({
+      text: req.body.text.trim()
+    });
 
-    todos.push(todo);
-    save(todos);
-
-    res.status(201).json(todo);
+    res.status(201).json(toPublic(doc));
   } catch (error) {
+    console.error(error);
     res.status(500).json(errorBody(500));
   }
 });
 
 // GET /todos/:id
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const todos = load();
-    const index = findIndexById(todos, req.params.id);
-
-    if (index === -1) {
+    if (!isValidId(req.params.id)) {
       return res.status(404).json(
         errorBody(404, "not found")
       );
     }
 
-    res.status(200).json(todos[index]);
+    const doc = await Todo.findById(req.params.id);
+
+    if (!doc) {
+      return res.status(404).json(
+        errorBody(404, "not found")
+      );
+    }
+
+    res.status(200).json(toPublic(doc));
   } catch (error) {
+    console.error(error);
     res.status(500).json(errorBody(500));
   }
 });
 
 // PATCH /todos/:id
-router.patch("/:id", (req, res) => {
+router.patch("/:id", async (req, res) => {
   try {
-    const todos = load();
-    const index = findIndexById(todos, req.params.id);
-
-    if (index === -1) {
+    if (!isValidId(req.params.id)) {
       return res.status(404).json(
         errorBody(404, "not found")
       );
     }
 
-    applyPatch(todos[index], req.body || {});
-    save(todos);
+    const validation = validatePatch(req.body);
 
-    res.status(200).json(todos[index]);
+    if (!validation.ok) {
+      return res.status(400).json(
+        errorBody(400, validation.error)
+      );
+    }
+
+    const doc = await Todo.findByIdAndUpdate(
+      req.params.id,
+      { $set: cleanPatch(req.body) },
+      { new: true, runValidators: true }
+    );
+
+    if (!doc) {
+      return res.status(404).json(
+        errorBody(404, "not found")
+      );
+    }
+
+    res.status(200).json(toPublic(doc));
   } catch (error) {
+    console.error(error);
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json(
+        errorBody(400, "Invalid changes")
+      );
+    }
+
     res.status(500).json(errorBody(500));
   }
 });
 
 // DELETE /todos/:id
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const todos = load();
-    const index = findIndexById(todos, req.params.id);
-
-    if (index === -1) {
+    if (!isValidId(req.params.id)) {
       return res.status(404).json(
         errorBody(404, "not found")
       );
     }
 
-    todos.splice(index, 1);
-    save(todos);
+    const doc = await Todo.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!doc) {
+      return res.status(404).json(
+        errorBody(404, "not found")
+      );
+    }
 
     res.status(204).end();
   } catch (error) {
+    console.error(error);
     res.status(500).json(errorBody(500));
   }
 });
