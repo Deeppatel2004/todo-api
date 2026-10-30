@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const { healthBody, errorBody } = require("./helpers");
 const todoRoutes = require("./routes/todos");
+const authRoutes = require("./routes/auth");
 const { logLine } = require("./logger");
 const { getPort } = require("./config");
 
@@ -30,6 +31,10 @@ app.get("/health", (req, res) => {
 
 // Serve frontend
 app.use(express.static("public"));
+
+// Mount authentication routes
+app.use("/auth", authRoutes);
+
 
 // Mount todo routes
 app.use("/todos", todoRoutes);
