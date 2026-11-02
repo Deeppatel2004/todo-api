@@ -1,27 +1,28 @@
-
 const express = require("express");
 const router = express.Router();
 
+const requireAuth = require("../middleware/requireAuth");
 const Todo = require("../models/Todo");
 
 const {
   validateTodo,
   validatePatch,
   buildFilter,
+  ownerFilter,
   isValidId,
-  toPublic,
+  toPublicTodo,
   cleanPatch,
   errorBody
 } = require("../helpers");
 
 // GET /todos
-router.get("/", async (req, res) => {
+router.get("/", requireAuth, async (req, res) => {
   try {
     const docs = await Todo.find(
-      buildFilter(req.query.done)
+      ownerFilter(req.user.id, buildFilter(req.query.done))
     );
 
-    res.status(200).json(docs.map(toPublic));
+    res.status(200).json(docs.map(toPublicTodo));
   } catch (error) {
     console.error(error);
     res.status(500).json(errorBody(500));
@@ -29,7 +30,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST /todos
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const validation = validateTodo(req.body);
 
@@ -40,10 +41,11 @@ router.post("/", async (req, res) => {
     }
 
     const doc = await Todo.create({
-      text: req.body.text.trim()
+      text: req.body.text.trim(),
+      owner: req.user.id
     });
 
-    res.status(201).json(toPublic(doc));
+    res.status(201).json(toPublicTodo(doc));
   } catch (error) {
     console.error(error);
     res.status(500).json(errorBody(500));
@@ -51,23 +53,22 @@ router.post("/", async (req, res) => {
 });
 
 // GET /todos/:id
-router.get("/:id", async (req, res) => {
+router.get("/:id", requireAuth, async (req, res) => {
   try {
     if (!isValidId(req.params.id)) {
-      return res.status(404).json(
-        errorBody(404, "not found")
-      );
+      return res.status(404).json(errorBody(404, "not found"));
     }
 
-    const doc = await Todo.findById(req.params.id);
+    const doc = await Todo.findOne({
+      _id: req.params.id,
+      owner: req.user.id
+    });
 
     if (!doc) {
-      return res.status(404).json(
-        errorBody(404, "not found")
-      );
+      return res.status(404).json(errorBody(404, "not found"));
     }
 
-    res.status(200).json(toPublic(doc));
+    res.status(200).json(toPublicTodo(doc));
   } catch (error) {
     console.error(error);
     res.status(500).json(errorBody(500));
@@ -75,12 +76,10 @@ router.get("/:id", async (req, res) => {
 });
 
 // PATCH /todos/:id
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", requireAuth, async (req, res) => {
   try {
     if (!isValidId(req.params.id)) {
-      return res.status(404).json(
-        errorBody(404, "not found")
-      );
+      return res.status(404).json(errorBody(404, "not found"));
     }
 
     const validation = validatePatch(req.body);
@@ -91,19 +90,20 @@ router.patch("/:id", async (req, res) => {
       );
     }
 
-    const doc = await Todo.findByIdAndUpdate(
-      req.params.id,
+    const doc = await Todo.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        owner: req.user.id
+      },
       { $set: cleanPatch(req.body) },
       { new: true, runValidators: true }
     );
 
     if (!doc) {
-      return res.status(404).json(
-        errorBody(404, "not found")
-      );
+      return res.status(404).json(errorBody(404, "not found"));
     }
 
-    res.status(200).json(toPublic(doc));
+    res.status(200).json(toPublicTodo(doc));
   } catch (error) {
     console.error(error);
 
@@ -118,22 +118,19 @@ router.patch("/:id", async (req, res) => {
 });
 
 // DELETE /todos/:id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     if (!isValidId(req.params.id)) {
-      return res.status(404).json(
-        errorBody(404, "not found")
-      );
+      return res.status(404).json(errorBody(404, "not found"));
     }
 
-    const doc = await Todo.findByIdAndDelete(
-      req.params.id
-    );
+    const doc = await Todo.findOneAndDelete({
+      _id: req.params.id,
+      owner: req.user.id
+    });
 
     if (!doc) {
-      return res.status(404).json(
-        errorBody(404, "not found")
-      );
+      return res.status(404).json(errorBody(404, "not found"));
     }
 
     res.status(204).end();

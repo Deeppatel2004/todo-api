@@ -6,8 +6,8 @@ function normalizeEmail(email) {
 
 function tokenPayload(user) {
   return {
-    id: user._id.toString(),
-    email: user.email,
+    sub: user._id.toString(),
+    email: user.email
   };
 }
 

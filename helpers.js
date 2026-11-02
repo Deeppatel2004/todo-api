@@ -29,6 +29,23 @@ function buildFilter(done) {
   return {};
 }
 
+// Add logged-in user's ID to the database filter
+function ownerFilter(userId, filter = {}) {
+  return {
+    ...filter,
+    owner: userId
+  };
+}
+
+// Convert MongoDB document to public API format
+function toPublicTodo(doc) {
+  return {
+    id: String(doc._id),
+    text: doc.text,
+    done: doc.done
+  };
+}
+
 // Check MongoDB ObjectId
 function isValidId(id) {
   return (
@@ -101,8 +118,9 @@ function errorBody(status, message = "server error") {
 module.exports = {
   validateTodo,
   buildFilter,
+  ownerFilter,
   isValidId,
-  toPublic,
+  toPublicTodo,
   cleanPatch,
   validatePatch,
   errorBody,
