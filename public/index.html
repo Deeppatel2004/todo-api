@@ -1,16 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>todo-app</title>
+  <title>Todo App</title>
+
   <style>
     :root {
       color-scheme: light;
       font-family: "Trebuchet MS", "Segoe UI", sans-serif;
       color: #202b28;
       background: #edf4ef;
-      font-synthesis: none;
     }
 
     * {
@@ -38,8 +39,13 @@
       text-transform: uppercase;
     }
 
+    h2 {
+      margin-top: 0;
+    }
+
     form {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
     }
 
@@ -58,6 +64,41 @@
       outline: 3px solid rgb(39 130 100 / 16%);
     }
 
+    button {
+      min-height: 44px;
+      padding: 0 15px;
+      border: 1px solid #d4dfd6;
+      border-radius: 6px;
+      background: #f4f7f2;
+      color: #31443a;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e9f1e9;
+    }
+
+    #loginForm {
+      flex-direction: column;
+    }
+
+    #loginForm input {
+      width: 100%;
+    }
+
+    #loginForm button,
+    #addBtn {
+      border-color: #217454;
+      background: #217454;
+      color: white;
+    }
+
+    #logoutBtn {
+      margin-bottom: 16px;
+    }
+
     #todoInput {
       flex: 1;
     }
@@ -71,44 +112,6 @@
       background: #f6f8f4;
     }
 
-    button {
-      min-height: 44px;
-      padding: 0 15px;
-      border: 1px solid #d4dfd6;
-      border-radius: 6px;
-      background: #f4f7f2;
-      color: #31443a;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
-    }
-
-    button:hover {
-      border-color: #9bb8a4;
-      background: #e9f1e9;
-    }
-
-    button:active {
-      transform: translateY(1px);
-    }
-
-    button:focus-visible {
-      outline: 3px solid rgb(39 130 100 / 25%);
-      outline-offset: 2px;
-    }
-
-    #addBtn {
-      border-color: #217454;
-      background: #217454;
-      color: #fff;
-    }
-
-    #addBtn:hover {
-      border-color: #185d42;
-      background: #185d42;
-    }
-
     .filters {
       display: flex;
       flex-wrap: wrap;
@@ -120,7 +123,6 @@
 
     #sortBtn {
       margin-left: auto;
-      background: transparent;
     }
 
     #todolist {
@@ -139,7 +141,7 @@
       padding: 8px;
       border: 1px solid #e2e9e1;
       border-radius: 6px;
-      background: #fff;
+      background: white;
     }
 
     #todolist li span {
@@ -165,9 +167,13 @@
       color: #9c4f3e;
     }
 
-    #clearDoneBtn:hover {
-      border-color: #d9b5a9;
-      background: #fbedE7;
+    #message,
+    #authMessage {
+      color: #b04435;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     @media (max-width: 480px) {
@@ -183,7 +189,6 @@
 
       #todolist li span {
         flex-basis: 100%;
-        padding: 4px 8px;
       }
 
       #sortBtn {
@@ -192,28 +197,103 @@
     }
   </style>
 </head>
+
 <body>
-  <form id="todoForm">
-  <input type="text" id="todoInput" placeholder="type something">
-  <button type="submit" id="addBtn">Add</button>
-  </form>
 
-  <div class="actions">
-    <input type="text" id="searchInput" placeholder="Search todos...">
-  </div>
+  <!-- LOGIN SECTION -->
+  <section id="authSection">
 
-  <div class="filters">
-    <button type="button" id="filterAll" aria-pressed="true">All</button>
-    <button type="button" id="filterActive" aria-pressed="false">Active</button>
-    <button type="button" id="filterDone" aria-pressed="false">Done</button>
-    <button type="button" id="sortBtn" aria-pressed="false">Sort A-Z</button>
-  </div>
+    <h2>Login</h2>
 
-  <p id="message" role="status" aria-live="polite"></p>
-  <ul id="todolist"></ul>
-  <p id="left"></p>
-  <button type="button" id="clearDoneBtn">Clear done</button>
+    <form id="loginForm">
+
+      <input
+        type="email"
+        id="emailInput"
+        placeholder="Enter email"
+        required
+      >
+
+      <input
+        type="password"
+        id="passwordInput"
+        placeholder="Enter password"
+        required
+      >
+
+      <button type="submit">Login</button>
+
+    </form>
+
+    <p id="authMessage" role="status"></p>
+
+  </section>
+
+  <!-- LOGOUT BUTTON -->
+  <button type="button" id="logoutBtn" hidden>
+    Logout
+  </button>
+
+  <!-- TODO SECTION -->
+  <section id="todoSection" hidden>
+
+    <form id="todoForm">
+
+      <input
+        type="text"
+        id="todoInput"
+        placeholder="Type something"
+      >
+
+      <button type="submit" id="addBtn">
+        Add
+      </button>
+
+    </form>
+
+    <div class="actions">
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search todos..."
+      >
+
+    </div>
+
+    <div class="filters">
+
+      <button type="button" id="filterAll">
+        All
+      </button>
+
+      <button type="button" id="filterActive">
+        Active
+      </button>
+
+      <button type="button" id="filterDone">
+        Done
+      </button>
+
+      <button type="button" id="sortBtn">
+        Sort A-Z
+      </button>
+
+    </div>
+
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <ul id="todolist"></ul>
+
+    <p id="left"></p>
+
+    <button type="button" id="clearDoneBtn">
+      Clear done
+    </button>
+
+  </section>
+
   <script src="script.js"></script>
-  
+
 </body>
 </html>
