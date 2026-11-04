@@ -8,10 +8,14 @@ let token = sessionStorage.getItem("token");
 const authSection = document.querySelector("#authSection");
 const todoSection = document.querySelector("#todoSection");
 const loginForm = document.querySelector("#loginForm");
+const authTitle = document.querySelector("#authTitle");
+const authSubmit = document.querySelector("#authSubmit");
+const authToggle = document.querySelector("#authToggle");
 const emailInput = document.querySelector("#emailInput");
 const passwordInput = document.querySelector("#passwordInput");
 const authMessage = document.querySelector("#authMessage");
 const logoutBtn = document.querySelector("#logoutBtn");
+let authMode = "login";
 
 const todoInput = document.querySelector("#todoInput");
 const todoForm = document.querySelector("#todoForm");
@@ -47,6 +51,7 @@ function showLogin() {
 
   todos = [];
 
+  setAuthMode("login");
   authSection.hidden = false;
   todoSection.hidden = true;
   logoutBtn.hidden = true;
@@ -61,16 +66,30 @@ function showTodos() {
   logoutBtn.hidden = false;
 }
 
+function setAuthMode(mode) {
+  authMode = mode;
+  const registering = mode === "register";
 
-// LOGIN
+  authTitle.textContent = registering ? "Register" : "Login";
+  authSubmit.textContent = registering ? "Register" : "Login";
+  authToggle.textContent = registering
+    ? "Already have an account? Login"
+    : "Need an account? Register";
+  passwordInput.autocomplete = registering ? "new-password" : "current-password";
+  authMessage.textContent = "";
+}
+
+
+// LOGIN AND REGISTRATION
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  authMessage.textContent = "Logging in...";
+  const registering = authMode === "register";
+  authMessage.textContent = registering ? "Creating account..." : "Logging in...";
 
   try {
-    const res = await fetch("/auth/login", {
+    const res = await fetch(registering ? "/auth/register" : "/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -85,7 +104,7 @@ loginForm.addEventListener("submit", async (event) => {
 
     if (!res.ok) {
       authMessage.textContent =
-        data.error || "Login failed";
+        data.error || (registering ? "Registration failed" : "Login failed");
       return;
     }
 
@@ -104,6 +123,10 @@ loginForm.addEventListener("submit", async (event) => {
     console.error(error);
     authMessage.textContent = "Server error";
   }
+});
+
+authToggle.addEventListener("click", () => {
+  setAuthMode(authMode === "login" ? "register" : "login");
 });
 
 

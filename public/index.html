@@ -88,7 +88,7 @@
       width: 100%;
     }
 
-    #loginForm button,
+    #loginForm button[type="submit"],
     #addBtn {
       border-color: #217454;
       background: #217454;
@@ -200,10 +200,10 @@
 
 <body>
 
-  <!-- LOGIN SECTION -->
+  <!-- AUTH SECTION -->
   <section id="authSection">
 
-    <h2>Login</h2>
+    <h2 id="authTitle">Login</h2>
 
     <form id="loginForm">
 
@@ -221,11 +221,12 @@
         required
       >
 
-      <button type="submit">Login</button>
+      <button type="submit" id="authSubmit">Login</button>
 
     </form>
 
     <p id="authMessage" role="status"></p>
+    <button type="button" id="authToggle">Need an account? Register</button>
 
   </section>
 
