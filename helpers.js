@@ -115,6 +115,15 @@ function errorBody(status, message = "server error") {
   };
 }
 
+function toPublicTodo(doc) {
+  return {
+    id: String(doc._id),
+    text: doc.text,
+    done: doc.done,
+    
+  };
+}
+
 module.exports = {
   validateTodo,
   buildFilter,

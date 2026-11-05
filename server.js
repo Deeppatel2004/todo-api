@@ -68,17 +68,25 @@ app.use((err, req, res, next) => {
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-        console.log("Database:", mongoose.connection.name);
+
+    console.log("Database:", mongoose.connection.name);
     console.log("Host:", mongoose.connection.host);
     console.log("db connected");
 
     app.listen(PORT, () => {
       console.log(`server on http://localhost:${PORT}`);
     });
+
   } catch (err) {
     console.error("db connection failed:", err.message);
     process.exit(1);
   }
 }
 
-startServer();
+// Export Express app for Supertest
+module.exports = app;
+
+// Start only when running server.js directly
+if (require.main === module) {
+  startServer();
+}

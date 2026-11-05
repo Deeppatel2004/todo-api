@@ -78,10 +78,12 @@ router.get("/:id", requireAuth, async (req, res) => {
 // PATCH /todos/:id
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
+    // Check whether the ID is valid
     if (!isValidId(req.params.id)) {
       return res.status(404).json(errorBody(404, "not found"));
     }
 
+    // Validate the incoming data
     const validation = validatePatch(req.body);
 
     if (!validation.ok) {
@@ -90,20 +92,29 @@ router.patch("/:id", requireAuth, async (req, res) => {
       );
     }
 
+    // Update only the logged-in user's todo
     const doc = await Todo.findOneAndUpdate(
       {
         _id: req.params.id,
         owner: req.user.id
       },
-      { $set: cleanPatch(req.body) },
-      { new: true, runValidators: true }
+      {
+        $set: cleanPatch(req.body)
+      },
+      {
+        returnDocument: "after",
+        runValidators: true
+      }
     );
 
+    // Check whether the todo exists
     if (!doc) {
       return res.status(404).json(errorBody(404, "not found"));
     }
 
+    // Return the updated todo
     res.status(200).json(toPublicTodo(doc));
+
   } catch (error) {
     console.error(error);
 
